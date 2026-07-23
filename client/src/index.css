@@ -1,0 +1,20 @@
+@import "tailwindcss";
+
+/*
+  Paleta placeholder (neutra, minimalista). Reemplazar estos valores por los
+  colores reales de marca de LS Jabones cuando estén disponibles — es el
+  único lugar que hay que tocar para reskinear toda la app.
+*/
+:root {
+  --color-brand: #6b7a5e;       /* verde salvia apagado, provisorio */
+  --color-brand-dark: #4f5c46;
+  --color-ink: #262421;
+  --color-paper: #faf9f7;
+  --color-line: #e7e4df;
+}
+
+body {
+  margin: 0;
+  background-color: var(--color-paper);
+  color: var(--color-ink);
+}

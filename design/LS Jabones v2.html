@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Karla:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;background:#f6eeeb;color:#3c2630;font-family:'Karla',sans-serif;-webkit-font-smoothing:antialiased}
+  a{color:#8a3b52;text-decoration:none}
+  a:hover{color:#6f2c40}
+  button,input,textarea{font-family:'Karla',sans-serif}
+  @keyframes lsPop{0%{transform:scale(1)}40%{transform:scale(1.35)}100%{transform:scale(1)}}
+  [data-mq-show]{display:none !important}
+  @media (max-width:760px){[data-mq-hide]{display:none !important}[data-mq-show]{display:flex !important}}
+</style>
+</helmet>
+
+<header style="position:sticky;top:0;z-index:30;background:#43222f;box-shadow:0 2px 18px rgba(60,38,48,.25)">
+  <div style="max-width:1120px;margin:0 auto;padding:12px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px">
+    <a href="#" onClick="{{ goHome }}" style="display:flex;align-items:center;gap:12px;color:#f6e3ea">
+      <span style="width:42px;height:42px;border-radius:50%;border:1px solid #b57e91;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <span style="width:36px;height:36px;border-radius:50%;border:1px solid #b57e91;display:flex;align-items:baseline;justify-content:center;font-family:'Cormorant Garamond',serif;color:#f6e3ea;padding-top:6px">
+          <span style="font-size:21px;font-weight:500;line-height:1">L</span><span style="font-size:8px;line-height:1;transform:translateY(-8px)">♥</span><span style="font-size:15px;font-weight:500;line-height:1">s</span>
+        </span>
+      </span>
+      <span style="display:flex;flex-direction:column;gap:1px">
+        <span style="font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;line-height:1;letter-spacing:.02em">LS Jabones</span>
+        <span style="font-size:8.5px;letter-spacing:.24em;text-transform:uppercase;color:#c98ba0">artesanales · a pedido</span>
+      </span>
+    </a>
+    <nav data-mq-hide style="display:flex;align-items:center;gap:24px">
+      <a href="#catalogo" onClick="{{ goHomeSoft }}" style="font-size:13px;font-weight:600;color:#d9b3c3" style-hover="color:#fff">Catálogo</a>
+      <a href="#combos" onClick="{{ goHomeSoft }}" style="font-size:13px;font-weight:600;color:#d9b3c3" style-hover="color:#fff">Combos</a>
+      <a href="#como-funciona" onClick="{{ goHomeSoft }}" style="font-size:13px;font-weight:600;color:#d9b3c3" style-hover="color:#fff">Cómo funciona</a>
+    </nav>
+    <button data-mq-show onClick="{{ openMenu }}" aria-label="Abrir menú" style="flex-direction:column;align-items:center;justify-content:center;gap:5px;width:42px;height:42px;border-radius:12px;border:1px solid rgba(201,139,160,.45);background:transparent;cursor:pointer;flex-shrink:0;margin-left:auto">
+      <span style="width:18px;height:2px;background:#f6e3ea;border-radius:2px"></span>
+      <span style="width:18px;height:2px;background:#f6e3ea;border-radius:2px"></span>
+      <span style="width:18px;height:2px;background:#f6e3ea;border-radius:2px"></span>
+    </button>
+    <button data-mq-hide onClick="{{ openDrawer }}" aria-label="Ver carrito" style="display:flex;align-items:center;gap:10px;background:#8a3b52;border:none;border-radius:999px;padding:9px 18px 9px 14px;cursor:pointer;transition:background .25s;flex-shrink:0" style-hover="background:#a04a63">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M6 8h12l-1.2 10.2a2 2 0 0 1-2 1.8H9.2a2 2 0 0 1-2-1.8L6 8Z" stroke="#f6e3ea" stroke-width="1.7"></path><path d="M9 8V6a3 3 0 0 1 6 0v2" stroke="#f6e3ea" stroke-width="1.7"></path></svg>
+      <span style="{{ badgeStyle }}">{{ itemCount }}</span>
+      <span style="font-size:13px;font-weight:700;color:#f6e3ea">{{ totalFmt }}</span>
+    </button>
+  </div>
+</header>
+
+<sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+<div data-screen-label="Home">
+  <section style="position:relative;overflow:hidden;background:#43222f;color:#f6e3ea;padding:64px 24px 72px">
+    <div style="position:absolute;right:-120px;top:-120px;width:420px;height:420px;border-radius:50%;border:1px solid rgba(201,139,160,.35);pointer-events:none"></div>
+    <div style="position:absolute;right:-60px;top:-60px;width:300px;height:300px;border-radius:50%;border:1px solid rgba(201,139,160,.25);pointer-events:none"></div>
+    <div style="max-width:1120px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;gap:40px">
+      <div style="flex:1;min-width:300px;display:flex;flex-direction:column;gap:18px">
+        <p style="margin:0;font-size:11px;letter-spacing:.32em;text-transform:uppercase;color:#c98ba0">Jabones artesanales · sin stock</p>
+        <h1 style="margin:0;font-family:'Cormorant Garamond',serif;font-weight:500;font-size:clamp(36px,5vw,52px);line-height:1.1;text-wrap:balance">Elegí tus jabones,<br><em style="font-weight:400;color:#e3b8c6">nosotros los hacemos para vos</em></h1>
+        <p style="margin:0;max-width:460px;font-size:15.5px;line-height:1.65;color:#d9b3c3;text-wrap:pretty">Armá tu pedido en un minuto: jabones individuales, combos listos o tu propio combo. Te confirmamos todo por WhatsApp.</p>
+        <div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:6px">
+          <a href="#catalogo" style="display:inline-flex;align-items:center;background:#f6e3ea;color:#6f2c40;font-size:14px;font-weight:700;letter-spacing:.04em;padding:14px 30px;border-radius:999px;transition:transform .25s, box-shadow .25s" style-hover="transform:translateY(-2px);box-shadow:0 10px 26px rgba(0,0,0,.25);color:#6f2c40">Empezar mi pedido</a>
+          <a href="#combos" style="display:inline-flex;align-items:center;border:1px solid #b57e91;color:#e3b8c6;font-size:14px;font-weight:600;letter-spacing:.04em;padding:14px 30px;border-radius:999px;transition:background .25s" style-hover="background:rgba(201,139,160,.15);color:#f6e3ea">Ver combos</a>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:14px;padding:0 20px;flex:1 1 240px">
+        <span style="width:120px;height:120px;border-radius:50%;border:1px solid #b57e91;display:flex;align-items:center;justify-content:center">
+          <span style="width:106px;height:106px;border-radius:50%;border:1px solid #b57e91;display:flex;align-items:baseline;justify-content:center;font-family:'Cormorant Garamond',serif;color:#f6e3ea;padding-top:19px">
+            <span style="font-size:58px;font-weight:500;line-height:1">L</span><span style="font-size:20px;line-height:1;transform:translateY(-25px)">♥</span><span style="font-size:42px;font-weight:500;line-height:1">s</span>
+          </span>
+        </span>
+        <p style="margin:0;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:16px;color:#c98ba0">hechos con amor, a pedido</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="catalogo" style="max-width:1120px;margin:0 auto;padding:56px 24px 40px" data-reveal>
+    <div style="display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:16px;margin-bottom:22px">
+      <div>
+        <p style="margin:0 0 6px;font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:#a17588">Catálogo</p>
+        <h2 style="margin:0;font-family:'Cormorant Garamond',serif;font-weight:500;font-size:34px">Nuestros jabones</h2>
+      </div>
+      <p style="margin:0;font-size:13px;color:#a17588">Elegí la cantidad y agregá — así de simple.</p>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px">
+      <sc-for list="{{ chips }}" as="chip" hint-placeholder-count="5">
+        <button onClick="{{ chip.pick }}" style="{{ chip.style }}">{{ chip.label }}</button>
+      </sc-for>
+      <button onClick="{{ toggleComboMode }}" style="{{ comboChipStyle }}">+ Armá tu combo</button>
+    </div>
+    <sc-if value="{{ comboMode }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:14px;background:#f0dde3;border:1px dashed #c98ba0;border-radius:16px;padding:14px 20px;margin-bottom:24px">
+        <p style="margin:0;flex:1;min-width:220px;font-size:13.5px;color:#6f5560"><strong>Armá tu combo:</strong> elegí 2 o 3 jabones tocando las tarjetas · {{ comboCount }}/3</p>
+        <span style="font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;color:#43222f">{{ comboSumFmt }}</span>
+        <button onClick="{{ addCustomCombo }}" disabled="{{ comboInvalid }}" style="{{ comboAddStyle }}" style-hover="background:#6f2c40">Agregar combo</button>
+        <button onClick="{{ toggleComboMode }}" style="border:none;background:none;color:#8a3b52;font-size:13px;font-weight:600;cursor:pointer;text-decoration:underline;padding:0">Cancelar</button>
+      </div>
+    </sc-if>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:20px">
+      <sc-for list="{{ products }}" as="p" hint-placeholder-count="8">
+        <article style="{{ p.cardStyle }}" style-hover="box-shadow:0 18px 40px rgba(67,34,47,.16);transform:translateY(-4px)">
+          <div style="position:relative;aspect-ratio:5/4;background:repeating-linear-gradient(-45deg,#f2e2e7 0 14px,#ecd7de 14px 28px);display:flex;align-items:center;justify-content:center">
+            <span style="font-family:monospace;font-size:11px;color:#a97e8e;background:rgba(255,251,250,.8);padding:5px 10px;border-radius:6px">{{ p.photoLabel }}</span>
+            <span style="position:absolute;top:12px;left:12px;background:rgba(67,34,47,.85);color:#f6e3ea;font-size:10.5px;font-weight:700;letter-spacing:.06em;padding:4px 10px;border-radius:999px">{{ p.perfume }}</span>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:8px;padding:16px 18px 18px;flex:1">
+            <div style="display:flex;align-items:start;justify-content:space-between;gap:10px">
+              <h3 style="margin:0;font-family:'Cormorant Garamond',serif;font-weight:600;font-size:20px;color:#43222f">{{ p.name }}</h3>
+              <span style="font-family:'Cormorant Garamond',serif;font-size:21px;font-weight:600;color:#8a3b52;white-space:nowrap">{{ p.priceFmt }}</span>
+            </div>
+            <p style="margin:0;font-size:13px;line-height:1.55;color:#6f5560;flex:1">{{ p.description }}</p>
+            <div style="display:flex;flex-wrap:wrap;gap:5px">
+              <sc-for list="{{ p.attributes }}" as="attr" hint-placeholder-count="2">
+                <span style="font-size:10.5px;color:#8a3b52;background:#f0dde3;border-radius:999px;padding:3px 9px">{{ attr }}</span>
+              </sc-for>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;margin-top:10px">
+              <sc-if value="{{ p.showStepper }}" hint-placeholder-val="{{ true }}">
+                <div style="display:flex;align-items:center;gap:2px;border:1px solid #e0c7d0;border-radius:999px;padding:3px">
+                  <button onClick="{{ p.qDec }}" style="width:28px;height:28px;border-radius:50%;border:none;background:transparent;color:#8a3b52;font-size:16px;cursor:pointer;line-height:1" style-hover="background:#f0dde3">−</button>
+                  <span style="font-size:14px;font-weight:700;min-width:20px;text-align:center">{{ p.qty }}</span>
+                  <button onClick="{{ p.qInc }}" style="width:28px;height:28px;border-radius:50%;border:none;background:transparent;color:#8a3b52;font-size:16px;cursor:pointer;line-height:1" style-hover="background:#f0dde3">+</button>
+                </div>
+              </sc-if>
+              <button onClick="{{ p.onAction }}" style="{{ p.btnStyle }}" style-hover="background:#6f2c40;color:#fff;border-color:#6f2c40">{{ p.btnLabel }}</button>
+            </div>
+          </div>
+        </article>
+      </sc-for>
+    </div>
+  </section>
+
+  <section id="combos" style="max-width:1120px;margin:0 auto;padding:40px 24px 64px" data-reveal>
+    <p style="margin:0 0 6px;font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:#a17588">Combos listos</p>
+    <h2 style="margin:0 0 24px;font-family:'Cormorant Garamond',serif;font-weight:500;font-size:34px">Pensados para regalar(te)</h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:20px">
+      <sc-for list="{{ combos }}" as="combo" hint-placeholder-count="2">
+        <article style="position:relative;overflow:hidden;display:flex;flex-direction:column;gap:12px;background:#43222f;color:#f6e3ea;border-radius:22px;padding:28px;transition:transform .3s, box-shadow .3s" style-hover="transform:translateY(-4px);box-shadow:0 18px 44px rgba(67,34,47,.3)">
+          <div style="position:absolute;right:-70px;bottom:-70px;width:220px;height:220px;border-radius:50%;border:1px solid rgba(201,139,160,.3);pointer-events:none"></div>
+          <span style="align-self:flex-start;background:#c98ba0;color:#43222f;font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:4px 12px;border-radius:999px">{{ combo.badge }}</span>
+          <h3 style="margin:0;font-family:'Cormorant Garamond',serif;font-weight:600;font-size:26px">{{ combo.name }}</h3>
+          <p style="margin:0;font-size:14px;line-height:1.6;color:#d9b3c3;flex:1">{{ combo.description }}</p>
+          <p style="margin:0;font-size:12.5px;color:#c98ba0;font-style:italic">Incluye: {{ combo.includes }}</p>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px">
+            <span style="font-family:'Cormorant Garamond',serif;font-size:27px;font-weight:600">{{ combo.priceFmt }}</span>
+            <button onClick="{{ combo.add }}" style="background:#f6e3ea;color:#6f2c40;border:none;font-size:13px;font-weight:700;letter-spacing:.04em;padding:12px 26px;border-radius:999px;cursor:pointer;transition:transform .25s" style-hover="transform:scale(1.05)">Agregar combo</button>
+          </div>
+        </article>
+      </sc-for>
+    </div>
+  </section>
+
+  <section id="como-funciona" style="background:#f0dde3;padding:48px 24px" data-reveal>
+    <div style="max-width:1120px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px">
+      <div style="display:flex;align-items:center;gap:16px">
+        <span style="width:48px;height:48px;border-radius:50%;background:#fffbfa;border:1px solid #c98ba0;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:24px;color:#8a3b52;flex-shrink:0">1</span>
+        <p style="margin:0;font-size:14px;line-height:1.5;color:#5c4450"><strong style="color:#43222f">Armá tu pedido</strong><br>jabones sueltos, combos o el tuyo propio.</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:16px">
+        <span style="width:48px;height:48px;border-radius:50%;background:#fffbfa;border:1px solid #c98ba0;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:24px;color:#8a3b52;flex-shrink:0">2</span>
+        <p style="margin:0;font-size:14px;line-height:1.5;color:#5c4450"><strong style="color:#43222f">Te confirmamos por WhatsApp</strong><br>detalle, tiempos de elaboración y pago.</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:16px">
+        <span style="width:48px;height:48px;border-radius:50%;background:#fffbfa;border:1px solid #c98ba0;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:24px;color:#8a3b52;flex-shrink:0">3</span>
+        <p style="margin:0;font-size:14px;line-height:1.5;color:#5c4450"><strong style="color:#43222f">Lo hacemos a mano</strong><br>y coordinamos la entrega con vos.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer style="background:#43222f;color:#e3b8c6;padding:44px 24px 36px">
+    <div style="max-width:1120px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:20px">
+      <div style="display:flex;align-items:center;gap:14px">
+        <span style="width:48px;height:48px;border-radius:50%;border:1px solid #b57e91;display:flex;align-items:center;justify-content:center">
+          <span style="width:41px;height:41px;border-radius:50%;border:1px solid #b57e91;display:flex;align-items:baseline;justify-content:center;font-family:'Cormorant Garamond',serif;color:#f6e3ea;padding-top:7px">
+            <span style="font-size:23px;font-weight:500;line-height:1">L</span><span style="font-size:9px;line-height:1;transform:translateY(-10px)">♥</span><span style="font-size:17px;font-weight:500;line-height:1">s</span>
+          </span>
+        </span>
+        <p style="margin:0;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:17px">Jabones artesanales, hechos con amor</p>
+      </div>
+      <p style="margin:0;font-size:12.5px;color:#c98ba0">Pedidos y consultas por WhatsApp · Argentina · © 2026 LS Jabones</p>
+    </div>
+  </footer>
+</div>
+</sc-if>
+
+<sc-if value="{{ isCheckout }}" hint-placeholder-val="{{ false }}">
+<main data-screen-label="Tu pedido" style="max-width:640px;margin:0 auto;padding:40px 24px 80px">
+  <a href="#" onClick="{{ goHome }}" style="font-size:13px;font-weight:600">← Volver al catálogo</a>
+  <h1 style="margin:18px 0 22px;font-family:'Cormorant Garamond',serif;font-weight:500;font-size:38px">Tu pedido</h1>
+  <div style="background:#fffbfa;border:1px solid #e9d5dc;border-radius:18px;padding:6px 22px;display:flex;flex-direction:column">
+    <sc-for list="{{ cartItems }}" as="item" hint-placeholder-count="2">
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px 14px;padding:16px 0;border-bottom:1px solid #f2e2e7">
+        <div style="width:52px;height:52px;border-radius:12px;background:repeating-linear-gradient(-45deg,#f2e2e7 0 8px,#ecd7de 8px 16px);flex-shrink:0"></div>
+        <div style="flex:1 1 150px;min-width:0">
+          <p style="margin:0;font-size:14px;font-weight:600">{{ item.name }}</p>
+          <p style="margin:2px 0 0;font-size:12px;color:#a17588">{{ item.unitFmt }} c/u</p>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;margin-left:auto">
+          <div style="display:flex;align-items:center;gap:10px">
+            <button onClick="{{ item.dec }}" style="width:28px;height:28px;border-radius:50%;border:1px solid #e0c7d0;background:#fff;color:#8a3b52;font-size:15px;cursor:pointer;line-height:1" style-hover="background:#f0dde3">−</button>
+            <span style="font-size:14px;font-weight:600;min-width:16px;text-align:center">{{ item.qty }}</span>
+            <button onClick="{{ item.inc }}" style="width:28px;height:28px;border-radius:50%;border:1px solid #e0c7d0;background:#fff;color:#8a3b52;font-size:15px;cursor:pointer;line-height:1" style-hover="background:#f0dde3">+</button>
+          </div>
+          <span style="font-size:14px;font-weight:700;min-width:60px;text-align:right;white-space:nowrap">{{ item.lineFmt }}</span>
+          <button onClick="{{ item.remove }}" aria-label="Quitar" style="border:none;background:none;color:#c9a3b0;font-size:18px;cursor:pointer;padding:2px" style-hover="color:#8a3b52">×</button>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+  <div style="margin-top:28px;display:flex;flex-direction:column;gap:16px">
+    <label style="display:flex;flex-direction:column;gap:6px;font-size:14px;font-weight:600">Nombre
+      <input value="{{ name }}" onChange="{{ onName }}" placeholder="Tu nombre" style="border:1px solid #e0c7d0;border-radius:12px;background:#fff;padding:12px 16px;font-size:14px;outline:none" style-focus="border-color:#c98ba0"></input>
+    </label>
+    <label style="display:flex;flex-direction:column;gap:6px;font-size:14px;font-weight:600">Teléfono (WhatsApp)
+      <input value="{{ phone }}" onChange="{{ onPhone }}" type="tel" placeholder="11-5555-5555" style="border:1px solid #e0c7d0;border-radius:12px;background:#fff;padding:12px 16px;font-size:14px;outline:none" style-focus="border-color:#c98ba0"></input>
+    </label>
+    <label style="display:flex;flex-direction:column;gap:6px;font-size:14px;font-weight:600">Notas (opcional)
+      <textarea value="{{ notes }}" onChange="{{ onNotes }}" rows="3" placeholder="Ej: retiro por la tarde, envolver para regalo…" style="border:1px solid #e0c7d0;border-radius:12px;background:#fff;padding:12px 16px;font-size:14px;outline:none;resize:vertical" style-focus="border-color:#c98ba0"></textarea>
+    </label>
+    <div style="display:flex;align-items:center;justify-content:space-between;border-top:1px solid #e9d5dc;padding-top:18px;margin-top:6px">
+      <div>
+        <p style="margin:0;font-size:12px;color:#a17588">Total</p>
+        <p style="margin:0;font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;color:#43222f">{{ totalFmt }}</p>
+      </div>
+      <button onClick="{{ submit }}" disabled="{{ cantSubmit }}" style="{{ submitStyle }}" style-hover="background:#6f2c40">Confirmar pedido</button>
+    </div>
+    <p style="margin:0;font-size:12px;color:#a17588;text-align:right">Te confirmamos el pedido por WhatsApp — no se cobra nada todavía.</p>
+  </div>
+</main>
+</sc-if>
+
+<sc-if value="{{ isConfirm }}" hint-placeholder-val="{{ false }}">
+<main data-screen-label="Confirmación" style="max-width:560px;margin:0 auto;padding:72px 24px 96px;display:flex;flex-direction:column;align-items:center;text-align:center">
+  <span style="width:72px;height:72px;border-radius:50%;background:#f0dde3;display:flex;align-items:center;justify-content:center">
+    <svg width="30" height="30" viewBox="0 0 24 24" fill="none"><path d="M5 12.5 9.5 17 19 7" stroke="#8a3b52" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+  </span>
+  <h1 style="margin:22px 0 0;font-family:'Cormorant Garamond',serif;font-weight:500;font-size:38px">¡Pedido recibido!</h1>
+  <p style="margin:10px 0 0;font-size:14px;color:#6f5560">Código de tu pedido: <strong style="color:#43222f">#{{ orderCode }}</strong></p>
+  <p style="margin:6px 0 0;font-size:13px;color:#a17588">En breve te confirmamos por WhatsApp al {{ orderPhone }}.</p>
+  <div style="margin-top:28px;width:100%;background:#fffbfa;border:1px solid #e9d5dc;border-radius:18px;padding:8px 22px;text-align:left">
+    <sc-for list="{{ orderItems }}" as="item" hint-placeholder-count="2">
+      <div style="display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid #f2e2e7;font-size:14px">
+        <span>{{ item.qty }}× {{ item.name }}</span>
+        <span style="font-weight:600">{{ item.lineFmt }}</span>
+      </div>
+    </sc-for>
+    <div style="display:flex;justify-content:space-between;padding:14px 0;font-size:15px;font-weight:700">
+      <span>Total</span>
+      <span style="color:#43222f">{{ orderTotalFmt }}</span>
+    </div>
+  </div>
+  <button onClick="{{ goHome }}" style="margin-top:28px;width:100%;border:1px solid #c98ba0;background:transparent;color:#8a3b52;font-size:14px;font-weight:600;letter-spacing:.04em;padding:14px;border-radius:999px;cursor:pointer;transition:background .25s" style-hover="background:#f0dde3">Volver al catálogo</button>
+</main>
+</sc-if>
+
+<div onClick="{{ closeMenu }}" style="{{ menuOverlayStyle }}" aria-hidden="true"></div>
+<nav data-screen-label="Menú lateral" style="{{ menuStyle }}">
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid rgba(201,139,160,.25)">
+    <span style="display:flex;align-items:center;gap:10px">
+      <span style="width:36px;height:36px;border-radius:50%;border:1px solid #b57e91;display:flex;align-items:baseline;justify-content:center;font-family:'Cormorant Garamond',serif;color:#f6e3ea;padding-top:6px">
+        <span style="font-size:19px;font-weight:500;line-height:1">L</span><span style="font-size:8px;line-height:1;transform:translateY(-8px)">♥</span><span style="font-size:14px;font-weight:500;line-height:1">s</span>
+      </span>
+      <span style="font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:600;color:#f6e3ea">LS Jabones</span>
+    </span>
+    <button onClick="{{ closeMenu }}" aria-label="Cerrar menú" style="border:none;background:none;font-size:22px;color:#c98ba0;cursor:pointer;padding:2px 6px" style-hover="color:#fff">×</button>
+  </div>
+  <div style="display:flex;flex-direction:column;padding:10px 0;flex:1">
+    <a href="#catalogo" onClick="{{ menuLink }}" style="padding:15px 24px;font-size:15px;font-weight:600;color:#e3b8c6" style-hover="background:rgba(201,139,160,.12);color:#fff">Catálogo</a>
+    <a href="#combos" onClick="{{ menuLink }}" style="padding:15px 24px;font-size:15px;font-weight:600;color:#e3b8c6" style-hover="background:rgba(201,139,160,.12);color:#fff">Combos</a>
+    <a href="#como-funciona" onClick="{{ menuLink }}" style="padding:15px 24px;font-size:15px;font-weight:600;color:#e3b8c6" style-hover="background:rgba(201,139,160,.12);color:#fff">Cómo funciona</a>
+    <button onClick="{{ openDrawer }}" style="margin:14px 24px 0;display:flex;align-items:center;justify-content:center;gap:10px;background:#8a3b52;color:#fff;border:none;border-radius:999px;padding:13px 20px;font-size:14px;font-weight:700;letter-spacing:.03em;cursor:pointer;transition:background .25s" style-hover="background:#a04a63">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M6 8h12l-1.2 10.2a2 2 0 0 1-2 1.8H9.2a2 2 0 0 1-2-1.8L6 8Z" stroke="#f6e3ea" stroke-width="1.7"></path><path d="M9 8V6a3 3 0 0 1 6 0v2" stroke="#f6e3ea" stroke-width="1.7"></path></svg>
+      Ver pedido ({{ itemCount }}) · {{ totalFmt }}
+    </button>
+  </div>
+  <p style="margin:0;padding:20px 24px;font-size:12px;color:#c98ba0;font-style:italic;font-family:'Cormorant Garamond',serif;border-top:1px solid rgba(201,139,160,.25)">hechos con amor, a pedido</p>
+</nav>
+<div style="{{ toastStyle }}">{{ toast }}</div>
+
+<div style="{{ stickyBarStyle }}">
+  <div style="max-width:1120px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 16px">
+    <p data-mq-hide style="margin:0;font-size:13.5px;color:#d9b3c3"><strong style="color:#f6e3ea">{{ itemCount }} {{ itemWord }}</strong> en tu pedido</p>
+    <div style="display:flex;align-items:center;gap:16px;margin-left:auto">
+      <span style="font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:600;color:#f6e3ea;white-space:nowrap">{{ totalFmt }}</span>
+      <button onClick="{{ openDrawer }}" style="background:#f6e3ea;color:#6f2c40;border:none;font-size:13.5px;font-weight:700;letter-spacing:.04em;padding:12px 28px;border-radius:999px;cursor:pointer;transition:transform .25s;white-space:nowrap" style-hover="transform:scale(1.05)">Ver pedido →</button>
+    </div>
+  </div>
+</div>
+
+<div onClick="{{ closeDrawer }}" style="{{ overlayStyle }}" aria-hidden="true"></div>
+<aside data-screen-label="Carrito (drawer)" style="{{ drawerStyle }}">
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:22px 24px 16px;border-bottom:1px solid #f2e2e7">
+    <h2 style="margin:0;font-family:'Cormorant Garamond',serif;font-weight:600;font-size:24px">Tu pedido</h2>
+    <button onClick="{{ closeDrawer }}" aria-label="Cerrar carrito" style="border:none;background:none;font-size:22px;color:#c9a3b0;cursor:pointer;padding:2px 6px" style-hover="color:#8a3b52">×</button>
+  </div>
+  <sc-if value="{{ hasItems }}" hint-placeholder-val="{{ false }}">
+    <div style="flex:1;overflow-y:auto;padding:4px 24px">
+      <sc-for list="{{ cartItems }}" as="item" hint-placeholder-count="2">
+        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:10px 12px;padding:16px 0;border-bottom:1px solid #f2e2e7">
+          <div style="width:48px;height:48px;border-radius:12px;background:repeating-linear-gradient(-45deg,#f2e2e7 0 8px,#ecd7de 8px 16px);flex-shrink:0"></div>
+          <div style="flex:1 1 120px;min-width:0">
+            <p style="margin:0;font-size:13.5px;font-weight:600">{{ item.name }}</p>
+            <p style="margin:2px 0 0;font-size:12px;color:#a17588">{{ item.unitFmt }} c/u</p>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <button onClick="{{ item.dec }}" style="width:26px;height:26px;border-radius:50%;border:1px solid #e0c7d0;background:#fff;color:#8a3b52;font-size:14px;cursor:pointer;line-height:1" style-hover="background:#f0dde3">−</button>
+            <span style="font-size:13px;font-weight:600;min-width:14px;text-align:center">{{ item.qty }}</span>
+            <button onClick="{{ item.inc }}" style="width:26px;height:26px;border-radius:50%;border:1px solid #e0c7d0;background:#fff;color:#8a3b52;font-size:14px;cursor:pointer;line-height:1" style-hover="background:#f0dde3">+</button>
+          </div>
+          <button onClick="{{ item.remove }}" aria-label="Quitar" style="border:none;background:none;color:#c9a3b0;font-size:17px;cursor:pointer;padding:2px" style-hover="color:#8a3b52">×</button>
+        </div>
+      </sc-for>
+    </div>
+  </sc-if>
+  <sc-if value="{{ noItems }}" hint-placeholder-val="{{ true }}">
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:24px;text-align:center">
+      <span style="width:56px;height:56px;border-radius:50%;background:#f0dde3;display:flex;align-items:center;justify-content:center">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M6 8h12l-1.2 10.2a2 2 0 0 1-2 1.8H9.2a2 2 0 0 1-2-1.8L6 8Z" stroke="#c98ba0" stroke-width="1.6"></path><path d="M9 8V6a3 3 0 0 1 6 0v2" stroke="#c98ba0" stroke-width="1.6"></path></svg>
+      </span>
+      <p style="margin:0;font-size:14px;color:#6f5560">Todavía no agregaste ningún jabón.</p>
+      <button onClick="{{ closeDrawer }}" style="border:none;background:none;color:#8a3b52;font-size:13px;font-weight:600;cursor:pointer;border-bottom:1px solid #c98ba0;padding:0 0 2px">Ver catálogo</button>
+    </div>
+  </sc-if>
+  <div style="border-top:1px solid #e9d5dc;padding:18px 24px 22px;display:flex;flex-direction:column;gap:12px">
+    <div style="display:flex;justify-content:space-between;align-items:baseline">
+      <span style="font-size:13px;color:#a17588">Total</span>
+      <span style="font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:600;color:#43222f">{{ totalFmt }}</span>
+    </div>
+    <p style="margin:0;font-size:11.5px;color:#a17588">Sin stock: cada jabón se elabora a pedido, con tiempos artesanales.</p>
+    <button onClick="{{ goCheckout }}" disabled="{{ noItems }}" style="{{ drawerCtaStyle }}" style-hover="background:#6f2c40">Continuar pedido</button>
+  </div>
+</aside>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;animacionesScroll&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Comportamiento&quot;}}">
+class Component extends DCLogic {
+  state = { view: 'home', drawerOpen: false, menuOpen: false, filter: null, cart: [], name: '', phone: '', notes: '', order: null, comboMode: false, comboSel: [], toast: '', toastOn: false, qtys: {}, justAdded: null, badgePulse: false };
+
+  PRODUCTS = [
+    { id: 'prod-lavanda', name: 'Jabón de lavanda', perfume: 'Lavanda', description: 'Aroma relajante, ideal para antes de dormir. Con avena molida para exfoliar suave.', attributes: ['relajante', 'piel sensible', 'vegano'], price: 3200 },
+    { id: 'prod-avena-miel', name: 'Jabón de avena y miel', perfume: 'Avena y miel', description: 'Hidratante y suave, pensado para pieles secas. Miel pura de productores locales.', attributes: ['hidratante', 'piel seca'], price: 3400 },
+    { id: 'prod-citrico', name: 'Jabón cítrico energizante', perfume: 'Naranja y pomelo', description: 'Aroma fresco y despertador, con ralladura natural de cítricos.', attributes: ['energizante', 'vegano'], price: 3200 },
+    { id: 'prod-carbon', name: 'Jabón de carbón activado', perfume: 'Tea tree', description: 'Purificante, recomendado para piel grasa o con tendencia acneica.', attributes: ['purificante', 'piel grasa'], price: 3600 },
+    { id: 'prod-rosa-mosqueta', name: 'Jabón de rosa mosqueta', perfume: 'Rosa mosqueta', description: 'Regenerador, con aceite de rosa mosqueta prensado en frío.', attributes: ['regenerador', 'piel sensible'], price: 3800 },
+    { id: 'prod-coco', name: 'Jabón de coco', perfume: 'Coco', description: 'Espuma cremosa y aroma tropical suave. Apto para todo tipo de piel.', attributes: ['hidratante', 'vegano'], price: 3200 },
+    { id: 'prod-romero', name: 'Jabón de romero y menta', perfume: 'Romero y menta', description: 'Refrescante, recomendado para uso en ducha matutina.', attributes: ['energizante', 'piel mixta'], price: 3200 },
+    { id: 'prod-calendula', name: 'Jabón de caléndula', perfume: 'Caléndula', description: 'Calmante, formulado pensando en pieles muy sensibles o irritadas.', attributes: ['calmante', 'piel sensible', 'vegano'], price: 3400 },
+  ];
+  COMBOS = [
+    { id: 'combo-relax', name: 'Combo relax', comboPrice: 8500, badge: 'El más pedido', description: 'Para una rutina nocturna relajante, con los aromas más suaves de la casa.', productIds: ['prod-lavanda', 'prod-rosa-mosqueta', 'prod-calendula'] },
+    { id: 'combo-energia', name: 'Combo energía', comboPrice: 8000, badge: 'Para arrancar el día', description: 'Frescura y despertar: la tríada perfecta para la ducha matutina.', productIds: ['prod-citrico', 'prod-romero', 'prod-carbon'] },
+  ];
+
+  fmt(n) { return '$' + n.toLocaleString('es-AR'); }
+
+  showToast(msg) {
+    clearTimeout(this._toastT);
+    this.setState({ toast: msg, toastOn: true });
+    this._toastT = setTimeout(() => this.setState({ toastOn: false }), 2200);
+  }
+
+  addItem(type, id, name, price, qty) {
+    const n = qty || 1;
+    const cart = this.state.cart.slice();
+    const i = cart.findIndex((it) => it.type === type && it.id === id);
+    if (i >= 0) cart[i] = { ...cart[i], qty: cart[i].qty + n };
+    else cart.push({ type, id, name, price, qty: n });
+    clearTimeout(this._toastT);
+    clearTimeout(this._pulseT);
+    this.setState({ cart, justAdded: type + '-' + id, toast: name + ' agregado ✓', toastOn: true, badgePulse: true });
+    this._pulseT = setTimeout(() => this.setState({ badgePulse: false }), 600);
+    this._toastT = setTimeout(() => this.setState({ toastOn: false, justAdded: null }), 2200);
+  }
+  setQty(type, id, qty) {
+    const cart = qty <= 0
+      ? this.state.cart.filter((it) => !(it.type === type && it.id === id))
+      : this.state.cart.map((it) => (it.type === type && it.id === id ? { ...it, qty } : it));
+    this.setState({ cart });
+  }
+
+  componentDidMount() {
+    if (!(this.props.animacionesScroll ?? true)) return;
+    setTimeout(() => {
+      const els = document.querySelectorAll('[data-reveal]');
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            e.target.style.opacity = '1';
+            e.target.style.transform = 'translateY(0)';
+            io.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0, rootMargin: '0px 0px -40px 0px' });
+      els.forEach((el) => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(26px)';
+        el.style.transition = 'opacity .85s ease, transform .85s cubic-bezier(.22,1,.36,1)';
+        io.observe(el);
+      });
+    }, 80);
+  }
+
+  renderVals() {
+    const s = this.state;
+    const total = s.cart.reduce((a, it) => a + it.price * it.qty, 0);
+    const itemCount = s.cart.reduce((a, it) => a + it.qty, 0);
+    const nameById = Object.fromEntries(this.PRODUCTS.map((p) => [p.id, p.name.replace('Jabón de ', '').replace('Jabón ', '')]));
+    const perfumes = [...new Set(this.PRODUCTS.map((p) => p.perfume))];
+    const chipStyle = (active) => ({
+      border: '1px solid ' + (active ? '#8a3b52' : '#e0c7d0'),
+      background: active ? '#8a3b52' : '#fff', color: active ? '#fff' : '#5c4450',
+      fontSize: '12.5px', fontWeight: 600, padding: '8px 16px', borderRadius: '999px', cursor: 'pointer', transition: 'all .2s',
+    });
+    const canSubmit = s.cart.length > 0 && s.name.trim() && s.phone.trim();
+    const ctaBase = {
+      background: '#8a3b52', color: '#fff', border: 'none', fontSize: '14px', fontWeight: 700,
+      letterSpacing: '.04em', padding: '14px 30px', borderRadius: '999px', cursor: 'pointer', transition: 'background .25s, opacity .25s',
+    };
+    return {
+      isHome: s.view === 'home', isCheckout: s.view === 'checkout', isConfirm: s.view === 'confirm',
+      itemCount, itemWord: itemCount === 1 ? 'jabón' : 'jabones',
+      hasItems: s.cart.length > 0, noItems: s.cart.length === 0,
+      totalFmt: this.fmt(total),
+      badgeStyle: {
+        minWidth: '19px', height: '19px', borderRadius: '10px', background: '#f6e3ea', color: '#6f2c40',
+        fontSize: '11px', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center',
+        padding: '0 5px', animation: s.badgePulse ? 'lsPop .5s ease' : 'none',
+      },
+      goHome: (e) => { if (e) e.preventDefault(); this.setState({ view: 'home' }); window.scrollTo(0, 0); },
+      goHomeSoft: () => { if (this.state.view !== 'home') this.setState({ view: 'home' }); },
+      openDrawer: () => this.setState({ drawerOpen: true, menuOpen: false }),
+      closeDrawer: () => this.setState({ drawerOpen: false }),
+      openMenu: () => this.setState({ menuOpen: true }),
+      closeMenu: () => this.setState({ menuOpen: false }),
+      menuLink: () => this.setState({ menuOpen: false, view: 'home' }),
+      menuOverlayStyle: {
+        position: 'fixed', inset: 0, zIndex: 52, background: 'rgba(40,18,26,.45)',
+        opacity: s.menuOpen ? 1 : 0, pointerEvents: s.menuOpen ? 'auto' : 'none', transition: 'opacity .35s ease',
+      },
+      menuStyle: {
+        position: 'fixed', top: 0, left: 0, zIndex: 55, height: '100%', width: '280px', maxWidth: '85vw',
+        background: '#43222f', display: 'flex', flexDirection: 'column',
+        boxShadow: '16px 0 48px rgba(40,18,26,.4)',
+        transform: s.menuOpen ? 'translateX(0)' : 'translateX(-105%)',
+        transition: 'transform .45s cubic-bezier(.22,1,.36,1)',
+      },
+      goCheckout: () => { this.setState({ drawerOpen: false, view: 'checkout' }); window.scrollTo(0, 0); },
+      products: this.PRODUCTS.filter((p) => !s.filter || p.perfume === s.filter).map((p) => {
+        const sel = s.comboSel.includes(p.id);
+        const qty = s.qtys[p.id] || 1;
+        const added = s.justAdded === 'product-' + p.id;
+        return {
+          ...p, qty, priceFmt: this.fmt(p.price),
+          photoLabel: '[ foto: ' + p.name.toLowerCase() + ' ]',
+          showStepper: !s.comboMode,
+          cardStyle: {
+            display: 'flex', flexDirection: 'column', background: '#fffbfa', borderRadius: '20px', overflow: 'hidden',
+            border: sel ? '2px solid #8a3b52' : '1px solid #ecd7de',
+            boxShadow: sel ? '0 12px 32px rgba(67,34,47,.18)' : '0 4px 16px rgba(67,34,47,.05)',
+            transition: 'box-shadow .3s, transform .3s, border-color .2s',
+          },
+          btnLabel: s.comboMode ? (sel ? 'Quitar ✓' : 'Sumar al combo') : (added ? '✓ Agregado' : 'Agregar'),
+          btnStyle: {
+            flex: 1, background: added ? '#43222f' : (sel ? '#8a3b52' : '#8a3b52'),
+            color: '#fff', border: 'none', fontSize: '13px', fontWeight: 700, letterSpacing: '.04em',
+            padding: '11px 18px', borderRadius: '999px', cursor: 'pointer',
+            transition: 'background .3s, transform .15s',
+            ...(sel || added ? {} : {}),
+            ...(s.comboMode && !sel ? { background: 'transparent', color: '#8a3b52', border: '1px solid #c98ba0' } : {}),
+          },
+          qInc: () => this.setState({ qtys: { ...this.state.qtys, [p.id]: Math.min(9, (this.state.qtys[p.id] || 1) + 1) } }),
+          qDec: () => this.setState({ qtys: { ...this.state.qtys, [p.id]: Math.max(1, (this.state.qtys[p.id] || 1) - 1) } }),
+          onAction: () => {
+            if (!this.state.comboMode) {
+              this.addItem('product', p.id, p.name, p.price, this.state.qtys[p.id] || 1);
+              return this.setState({ qtys: { ...this.state.qtys, [p.id]: 1 } });
+            }
+            const cs = this.state.comboSel;
+            if (cs.includes(p.id)) return this.setState({ comboSel: cs.filter((id) => id !== p.id) });
+            if (cs.length >= 3) return this.showToast('Máximo 3 jabones por combo');
+            this.setState({ comboSel: [...cs, p.id] });
+          },
+        };
+      }),
+      combos: this.COMBOS.map((c) => ({
+        ...c, priceFmt: this.fmt(c.comboPrice),
+        includes: c.productIds.map((id) => nameById[id]).join(' · '),
+        add: () => this.addItem('combo', c.id, c.name, c.comboPrice, 1),
+      })),
+      chips: [{ label: 'Todos', v: null }, ...perfumes.map((p) => ({ label: p, v: p }))].map((c) => ({
+        label: c.label, style: chipStyle(s.filter === c.v), pick: () => this.setState({ filter: c.v }),
+      })),
+      comboMode: s.comboMode,
+      comboCount: s.comboSel.length,
+      comboSumFmt: this.fmt(s.comboSel.reduce((a, id) => a + this.PRODUCTS.find((p) => p.id === id).price, 0)),
+      comboInvalid: s.comboSel.length < 2,
+      comboAddStyle: {
+        background: '#8a3b52', color: '#fff', border: 'none', fontSize: '13px', fontWeight: 700,
+        letterSpacing: '.04em', padding: '11px 24px', borderRadius: '999px',
+        cursor: s.comboSel.length >= 2 ? 'pointer' : 'default', opacity: s.comboSel.length >= 2 ? 1 : 0.45,
+        transition: 'background .25s, opacity .25s',
+      },
+      comboChipStyle: {
+        border: '1px dashed ' + (s.comboMode ? '#8a3b52' : '#c98ba0'),
+        background: s.comboMode ? '#f0dde3' : 'transparent', color: '#8a3b52',
+        fontSize: '12.5px', fontWeight: 700, padding: '8px 16px', borderRadius: '999px', cursor: 'pointer', transition: 'all .2s',
+      },
+      toggleComboMode: () => this.setState({ comboMode: !this.state.comboMode, comboSel: [] }),
+      addCustomCombo: () => {
+        const cs = this.state.comboSel;
+        if (cs.length < 2) return;
+        const picks = cs.map((id) => this.PRODUCTS.find((p) => p.id === id));
+        const name = 'Tu combo: ' + picks.map((p) => p.name.replace('Jabón de ', '').replace('Jabón ', '')).join(' · ');
+        const price = picks.reduce((a, p) => a + p.price, 0);
+        this.addItem('custom-combo', 'custom-' + Date.now(), name, price, 1);
+        this.setState({ comboMode: false, comboSel: [] });
+      },
+      cartItems: s.cart.map((it) => ({
+        ...it, unitFmt: this.fmt(it.price), lineFmt: this.fmt(it.price * it.qty),
+        inc: () => this.setQty(it.type, it.id, it.qty + 1),
+        dec: () => this.setQty(it.type, it.id, it.qty - 1),
+        remove: () => this.setQty(it.type, it.id, 0),
+      })),
+      name: s.name, phone: s.phone, notes: s.notes,
+      onName: (e) => this.setState({ name: e.target.value }),
+      onPhone: (e) => this.setState({ phone: e.target.value }),
+      onNotes: (e) => this.setState({ notes: e.target.value }),
+      cantSubmit: !canSubmit,
+      submitStyle: { ...ctaBase, opacity: canSubmit ? 1 : 0.45, cursor: canSubmit ? 'pointer' : 'default' },
+      drawerCtaStyle: { ...ctaBase, width: '100%', opacity: s.cart.length ? 1 : 0.45 },
+      submit: () => {
+        if (!canSubmit) return;
+        const code = 'LS-' + Math.random().toString(36).slice(2, 7).toUpperCase();
+        const order = { code, phone: this.state.phone, total, items: this.state.cart.map((it) => ({ name: it.name, qty: it.qty, lineFmt: this.fmt(it.price * it.qty) })) };
+        this.setState({ order, cart: [], view: 'confirm' });
+        window.scrollTo(0, 0);
+      },
+      orderCode: s.order ? s.order.code : '', orderPhone: s.order ? s.order.phone : '',
+      orderItems: s.order ? s.order.items : [], orderTotalFmt: s.order ? this.fmt(s.order.total) : '',
+      toast: s.toast,
+      toastStyle: {
+        position: 'fixed', bottom: s.cart.length && s.view === 'home' ? '104px' : '28px', left: '50%', zIndex: 60,
+        transform: s.toastOn ? 'translate(-50%, 0) scale(1)' : 'translate(-50%, 14px) scale(.92)',
+        opacity: s.toastOn ? 1 : 0, pointerEvents: 'none',
+        background: '#43222f', color: '#f6e3ea', fontSize: '13.5px', fontWeight: 600,
+        padding: '12px 22px', borderRadius: '999px', boxShadow: '0 12px 34px rgba(67,34,47,.35)',
+        transition: 'opacity .3s ease, transform .4s cubic-bezier(.34,1.56,.64,1), bottom .3s', maxWidth: '90vw',
+        whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
+      },
+      stickyBarStyle: {
+        position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 35,
+        background: 'rgba(67,34,47,.96)', backdropFilter: 'blur(8px)', padding: '14px 24px',
+        boxShadow: '0 -8px 30px rgba(67,34,47,.25)',
+        transform: s.cart.length && s.view === 'home' && !s.drawerOpen ? 'translateY(0)' : 'translateY(110%)',
+        transition: 'transform .5s cubic-bezier(.22,1,.36,1)',
+      },
+      overlayStyle: {
+        position: 'fixed', inset: 0, zIndex: 40, background: 'rgba(40,18,26,.45)',
+        opacity: s.drawerOpen ? 1 : 0, pointerEvents: s.drawerOpen ? 'auto' : 'none', transition: 'opacity .35s ease',
+      },
+      drawerStyle: {
+        position: 'fixed', top: 0, right: 0, zIndex: 50, height: '100%', width: '100%', maxWidth: '400px',
+        background: '#fffbfa', display: 'flex', flexDirection: 'column',
+        boxShadow: '-16px 0 48px rgba(67,34,47,.25)',
+        transform: s.drawerOpen ? 'translateX(0)' : 'translateX(105%)',
+        transition: 'transform .55s cubic-bezier(.32,1.25,.4,1)',
+      },
+    };
+  }
+}
+</script>
+</body>
+</html>
