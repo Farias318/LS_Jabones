@@ -101,8 +101,6 @@ export function Cart() {
           <div className="flex flex-col gap-3 sm:flex-row">
             <a
               href={MERCADOPAGO_PAY_URL}
-              target="_blank"
-              rel="noopener noreferrer"
               aria-disabled={!canSubmit}
               tabIndex={canSubmit ? 0 : -1}
               onClick={handlePagarAhora}
@@ -117,8 +115,6 @@ export function Cart() {
 
             <a
               href={whatsAppUrl}
-              target="_blank"
-              rel="noopener noreferrer"
               aria-disabled={!canSubmit}
               tabIndex={canSubmit ? 0 : -1}
               onClick={handleEncargarWhatsApp}
