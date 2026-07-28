@@ -14,18 +14,24 @@ export function buildWhatsAppOrderUrl(
   items: CartItem[],
   total: number,
 ): string {
+  const productWord = items.length === 1 ? 'este producto' : 'estos productos';
+
   const lines = [
-    `🧼 Pedido #${orderCode} — LS Jabones`,
-    `${customer.name} — ${customer.phone}`,
+    `¡Hola! 👋 Me interesa encargar ${productWord} de LS Jabones 🧼`,
     '',
-    ...items.map((item) => `${item.quantity}× ${item.nameSnapshot} (${formatPrice(item.unitPrice * item.quantity)})`),
+    ...items.map((item) => `• ${item.quantity}× ${item.nameSnapshot} — ${formatPrice(item.unitPrice * item.quantity)}`),
     '',
-    `Total: ${formatPrice(total)}`,
+    `💰 Total: ${formatPrice(total)}`,
+    '',
+    `🙋 Soy: ${customer.name}`,
+    `📱 Mi contacto: ${customer.phone}`,
   ];
 
   if (customer.notes) {
-    lines.push('', `Notas: ${customer.notes}`);
+    lines.push(`📝 Notas: ${customer.notes}`);
   }
+
+  lines.push('', `🧾 Pedido #${orderCode}`);
 
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(lines.join('\n'))}`;
 }
