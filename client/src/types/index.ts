@@ -18,7 +18,7 @@ export interface Combo {
   active: boolean;
 }
 
-export type CartRefType = 'product' | 'combo';
+export type CartRefType = 'product' | 'combo' | 'custom-combo';
 
 export interface CartItem {
   refType: CartRefType;

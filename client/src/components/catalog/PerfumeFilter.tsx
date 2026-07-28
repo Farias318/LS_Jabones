@@ -4,14 +4,19 @@ interface PerfumeFilterProps {
   onSelect: (perfume: string | null) => void;
 }
 
+/**
+ * No envuelve en su propio contenedor a propósito: en el mock los chips de
+ * perfume y el chip "+ Armá tu combo" comparten una sola fila flex-wrap, así
+ * que el layout lo define el padre (Home).
+ */
 export function PerfumeFilter({ perfumes, selected, onSelect }: PerfumeFilterProps) {
   return (
-    <div className="flex flex-wrap gap-2 overflow-x-auto pb-1">
+    <>
       <FilterChip label="Todos" active={selected === null} onClick={() => onSelect(null)} />
       {perfumes.map((perfume) => (
         <FilterChip key={perfume} label={perfume} active={selected === perfume} onClick={() => onSelect(perfume)} />
       ))}
-    </div>
+    </>
   );
 }
 
@@ -22,7 +27,7 @@ function FilterChip({ label, active, onClick }: { label: string; active: boolean
       className={`shrink-0 rounded-full px-3.5 py-1.5 text-xs font-medium transition-colors ${
         active
           ? 'bg-[var(--color-brand)] text-white'
-          : 'bg-white text-[var(--color-ink)]/70 ring-1 ring-[var(--color-line)] hover:ring-[var(--color-brand)]'
+          : 'bg-[var(--color-surface)] text-[var(--color-muted)] ring-1 ring-[var(--color-line)] hover:ring-[var(--color-brand)]'
       }`}
     >
       {label}

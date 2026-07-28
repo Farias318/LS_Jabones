@@ -1,8 +1,6 @@
 import { Link, Navigate, useLocation, useParams } from 'react-router-dom';
 import type { Order } from '../types';
-import { Button } from '../components/ui/Button';
-
-const currency = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 });
+import { formatPrice } from '../utils/format';
 
 export function OrderConfirm() {
   const { code } = useParams<{ code: string }>();
@@ -14,40 +12,40 @@ export function OrderConfirm() {
   }
 
   return (
-    <main className="mx-auto flex max-w-xl flex-col items-center px-4 py-16 text-center">
-      <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[var(--color-brand)]/10">
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <main className="mx-auto flex max-w-140 flex-col items-center px-6 pb-24 pt-18 text-center">
+      <span className="flex h-18 w-18 items-center justify-center rounded-full bg-[var(--color-accent-soft)]">
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M5 12.5 9.5 17 19 7" stroke="var(--color-brand)" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
-      </div>
+      </span>
 
-      <h1 className="mt-4 text-xl font-semibold">¡Pedido recibido!</h1>
-      <p className="mt-1 text-sm text-[var(--color-ink)]/60">
-        Código de tu pedido: <span className="font-semibold text-[var(--color-ink)]">#{order.code}</span>
+      <h1 className="mt-5.5 font-serif text-[38px] font-medium text-[var(--color-ink)]">¡Pedido recibido!</h1>
+      <p className="mt-2.5 text-sm text-[var(--color-muted)]">
+        Código de tu pedido: <strong className="text-[var(--color-deep)]">#{order.code}</strong>
       </p>
-      <p className="mt-1 text-xs text-[var(--color-ink)]/50">
+      <p className="mt-1.5 text-[13px] text-[var(--color-label)]">
         En breve te confirmamos por WhatsApp al {order.customer.phone}.
       </p>
 
-      <div className="mt-6 w-full divide-y divide-[var(--color-line)] rounded-2xl border border-[var(--color-line)] bg-white p-4 text-left">
+      <div className="mt-7 w-full rounded-[18px] border border-[var(--color-line)] bg-[var(--color-surface)] px-5.5 py-2 text-left">
         {order.items.map((item) => (
-          <div key={`${item.refType}-${item.refId}`} className="flex justify-between py-2 text-sm">
+          <div key={`${item.refType}-${item.refId}`} className="flex justify-between border-b border-[#f6e8ec] py-3 text-sm">
             <span>
               {item.quantity}× {item.nameSnapshot}
             </span>
-            <span className="font-medium">{currency.format(item.unitPrice * item.quantity)}</span>
+            <span className="font-semibold">{formatPrice(item.unitPrice * item.quantity)}</span>
           </div>
         ))}
-        <div className="flex justify-between pt-2 text-sm font-semibold">
+        <div className="flex justify-between py-3.5 text-[15px] font-bold">
           <span>Total</span>
-          <span>{currency.format(order.total)}</span>
+          <span className="text-[var(--color-deep)]">{formatPrice(order.total)}</span>
         </div>
       </div>
 
-      <Link to="/" className="mt-6 w-full">
-        <Button variant="secondary" className="w-full">
+      <Link to="/" className="mt-7 w-full">
+        <button className="w-full rounded-full border border-[#d9b3c0] bg-transparent px-4 py-3.5 text-sm font-semibold tracking-wide text-[var(--color-brand)] transition-colors hover:bg-[var(--color-accent-soft)]">
           Volver al catálogo
-        </Button>
+        </button>
       </Link>
     </main>
   );
