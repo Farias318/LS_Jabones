@@ -4,6 +4,7 @@ import { useCart } from '../hooks/useCart';
 import { useToast } from '../hooks/useToast';
 import { CartLineItem } from '../components/cart/CartLineItem';
 import { Input } from '../components/ui/Input';
+import { createOrder } from '../services/api';
 import { formatPrice } from '../utils/format';
 import { buildWhatsAppOrderUrl, generateOrderCode } from '../utils/orderMessage';
 import { MERCADOPAGO_PAY_URL } from '../config/checkout';
@@ -19,21 +20,41 @@ export function Cart() {
 
   const canSubmit = items.length > 0 && name.trim() !== '' && phone.trim() !== '';
 
-  const handlePagarAhora = (event: MouseEvent<HTMLAnchorElement>) => {
-    if (!canSubmit) {
-      event.preventDefault();
-      return;
+  /*
+    POST /api/orders antes de navegar (Fase 6 del roadmap). Si el backend falla o está
+    "dormido" por cold start, se sigue igual con orderCode generado en el navegador —
+    se pierde ese registro puntual en el panel admin, pero no se rompe la experiencia
+    del cliente (ver ROADMAP-BACKEND-ADMIN.md §4.6).
+  */
+  async function registerOrder(intent: 'pago_directo' | 'whatsapp'): Promise<string> {
+    const customer = { name, phone, notes: notes || undefined };
+    try {
+      const order = await createOrder(customer, items, intent);
+      return order.code;
+    } catch (err) {
+      console.error('No se pudo registrar el pedido en el backend:', err);
+      return orderCode;
     }
+  }
+
+  const handlePagarAhora = async (event: MouseEvent<HTMLAnchorElement>) => {
+    event.preventDefault();
+    if (!canSubmit) return;
+
     showToast(`Te llevamos a Mercado Pago — el total es ${formatPrice(total)}`);
+    await registerOrder('pago_directo');
+    window.location.href = MERCADOPAGO_PAY_URL;
   };
 
-  const handleEncargarWhatsApp = (event: MouseEvent<HTMLAnchorElement>) => {
-    if (!canSubmit) {
-      event.preventDefault();
-      return;
-    }
-    showToast(`Pedido #${orderCode} — te esperamos en WhatsApp ✓`);
+  const handleEncargarWhatsApp = async (event: MouseEvent<HTMLAnchorElement>) => {
+    event.preventDefault();
+    if (!canSubmit) return;
+
+    const code = await registerOrder('whatsapp');
+    showToast(`Pedido #${code} — te esperamos en WhatsApp ✓`);
+    const url = buildWhatsAppOrderUrl(code, { name, phone, notes: notes || undefined }, items, total);
     clear();
+    window.location.href = url;
   };
 
   if (items.length === 0) {

@@ -3,10 +3,11 @@ import { db } from './index.js';
 import { combos, comboItems, products } from './schema.js';
 
 /*
-  Fase 2 del roadmap (ROADMAP-BACKEND-ADMIN.md): migra el catálogo hardcodeado
-  en client/src/data/{products,combos}.mock.ts a filas reales. Es un script
-  idempotente (trunca y vuelve a insertar) pensado para desarrollo, no para
-  correr contra producción con pedidos reales ya cargados.
+  Fase 2 del roadmap (ROADMAP-BACKEND-ADMIN.md): migró el catálogo que antes
+  vivía hardcodeado en el frontend (client/src/data/*.mock.ts, ya borrados
+  tras la Fase 6) a filas reales. Es un script idempotente (trunca y vuelve a
+  insertar) pensado para desarrollo, no para correr contra producción con
+  pedidos reales ya cargados.
 */
 
 const productsMock = [

@@ -1,29 +1,42 @@
-import type { CartItem, CustomerInfo, Order } from '../types';
+import { API_URL } from '../config/api';
+import type { CartItem, Combo, CustomerInfo, Order, Product } from '../types';
 
-/*
-  Sin backend todavía (frontend-first, ver docs/analisis-mejoras.md). Esta
-  función simula lo que hará POST /api/orders: valida, genera un código corto
-  y resuelve como si el pedido se hubiese guardado. El día que exista la API
-  real, solo cambia el cuerpo de esta función — los componentes que la llaman
-  (Cart.tsx) no deberían tocarse.
-*/
-function randomOrderCode(): string {
-  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  return Array.from({ length: 4 }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
+export async function fetchProducts(): Promise<Product[]> {
+  const response = await fetch(`${API_URL}/api/products`);
+  if (!response.ok) throw new Error(`No se pudo cargar el catálogo (status ${response.status})`);
+  return response.json();
 }
 
-export async function createOrder(customer: CustomerInfo, items: CartItem[]): Promise<Order> {
-  await new Promise((resolve) => setTimeout(resolve, 400));
+export async function fetchCombos(): Promise<Combo[]> {
+  const response = await fetch(`${API_URL}/api/combos`);
+  if (!response.ok) throw new Error(`No se pudieron cargar los combos (status ${response.status})`);
+  return response.json();
+}
 
-  const total = items.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0);
+export async function createOrder(
+  customer: CustomerInfo,
+  items: CartItem[],
+  intent: 'pago_directo' | 'whatsapp',
+): Promise<Order> {
+  const response = await fetch(`${API_URL}/api/orders`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      customer,
+      items: items.map(({ refType, refId, nameSnapshot, unitPrice, quantity }) => ({
+        refType,
+        refId,
+        nameSnapshot,
+        unitPrice,
+        quantity,
+      })),
+      intent,
+    }),
+  });
 
-  return {
-    id: crypto.randomUUID(),
-    code: randomOrderCode(),
-    customer,
-    items,
-    total,
-    status: 'pendiente',
-    createdAt: new Date().toISOString(),
-  };
+  if (!response.ok) {
+    throw new Error(`No se pudo registrar el pedido (status ${response.status})`);
+  }
+
+  return response.json();
 }

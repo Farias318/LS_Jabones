@@ -1,17 +1,20 @@
-import { useMemo, useState } from 'react';
-import { productsMock } from '../data/products.mock';
-import { combosMock } from '../data/combos.mock';
+import { useEffect, useMemo, useState } from 'react';
+import type { Combo, Product } from '../types';
+import { fetchCombos, fetchProducts } from '../services/api';
 
-/*
-  Fuente de datos mock — reemplazar por fetch a /api/products y /api/combos
-  cuando exista el backend (Fase 1 en ../../../docs/especificacion-tecnica.md).
-  La forma del hook (products, combos, perfumes, filtro) no debería cambiar.
-*/
 export function useProducts() {
   const [perfumeFilter, setPerfumeFilter] = useState<string | null>(null);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [combos, setCombos] = useState<Combo[]>([]);
 
-  const products = useMemo(() => productsMock.filter((p) => p.active), []);
-  const combos = useMemo(() => combosMock.filter((c) => c.active), []);
+  useEffect(() => {
+    fetchProducts()
+      .then(setProducts)
+      .catch((err) => console.error('Error cargando productos:', err));
+    fetchCombos()
+      .then(setCombos)
+      .catch((err) => console.error('Error cargando combos:', err));
+  }, []);
 
   const perfumes = useMemo(
     () => Array.from(new Set(products.map((p) => p.perfume))).sort(),
