@@ -113,9 +113,9 @@ Cada fase es una sesión de trabajo separada. No se arranca la fase N+1 sin habe
 7. **Panel admin (frontend nuevo)** — login + ruta protegida `/admin`. Tabla de pedidos con: cliente,
    teléfono, items, total, estado de pago (calculado), estado de fabricación. Acción "cargar pago"
    (monto + método + nota) y selector de estado de fabricación.
-8. **Deploy** — migrar el schema a **Neon** (Postgres free tier), desplegar el backend a **Render**
-   (free tier), configurar CORS solo para el origen de GitHub Pages, y apuntar el frontend
-   (`VITE_API_URL`) al backend ya desplegado.
+8. **Deploy** — desplegar el backend a **Render** (free tier), configurar CORS solo para el origen de
+   GitHub Pages, y apuntar el frontend (`VITE_API_URL`) al backend ya desplegado. *(La migración del
+   schema a Neon, que originalmente esta fase iba a hacer, ya se adelantó — ver sección 8.)*
 
 ## 5. ¿Es viable sin costo?
 
@@ -123,8 +123,8 @@ Sí, en todas las etapas:
 
 | Pieza | Costo | Nota |
 |---|---|---|
-| Postgres local | $0 | Sin límites, sin depender de internet — ideal para desarrollar las fases 1-7. |
-| Neon (Postgres free tier) | $0 | Alcanza de sobra para el volumen de este negocio. |
+| Postgres local | $0 | Sin límites, sin depender de internet. Sigue instalado como fallback, pero desde 2026-07-29 la base activa es Neon (ver sección 8). |
+| Neon (Postgres free tier) | $0 | Alcanza de sobra para el volumen de este negocio. Adoptada antes de lo planeado (no recién en el deploy) como base de **desarrollo** compartida. |
 | Render (API free tier) | $0 | Tiene *cold start* (la instancia "duerme" tras inactividad, la primera request tarda unos segundos) — aceptable para este caso, ya documentado en `.cloud/infra/deploy.md`. |
 | Mercado Pago | $0 | Mientras se use el link personal ("Tu Link") no hay integración que pagar. La comisión por venta solo aplicaría si en el futuro se migra a Checkout Pro. |
 
@@ -132,17 +132,67 @@ Sí, en todas las etapas:
 
 - **ORM: Drizzle** — más cercano a SQL puro que Prisma, mejor vidriera de diseño de base de datos para
   portfolio (a costa de algo más de código manual en migraciones/queries).
-- **Postgres local primero** — se desarrolla y prueba todo en local; recién se migra a Neon cuando el
-  backend esté validado (Fase 8).
+- **Postgres local primero, pero no para siempre** — el plan original era desarrollar en local y migrar
+  a Neon recién en el deploy (Fase 8). Se adelantó a Neon el 2026-07-29 — ver justificación y pasos en
+  la sección 8.
 
 ## 7. Próximo paso
 
 Fases 1-6 completas y probadas (2026-07-28). Sigue la **Fase 7** (panel admin, frontend nuevo) en una
 conversación dedicada.
 
+## 8. Base de datos compartida en Neon (adoptada antes de tiempo)
+
+### Por qué
+
+El plan original (sección 6) era Postgres local durante todo el desarrollo, migrando a Neon recién en
+el deploy (Fase 8). Pero el desarrollo de este proyecto alterna entre **dos máquinas** (una netbook del
+laburo y una PC personal), y Postgres local es exclusivo de cada una — no hay forma de que ambas vean
+los mismos datos sin sincronizar a mano. Por eso, el 2026-07-29 se migró la base de desarrollo a **Neon**
+(free tier), adelantando esa parte puntual de la Fase 8. El resto de la Fase 8 (desplegar el backend a
+Render, CORS, `VITE_API_URL`) sigue pendiente.
+
+Postgres local (instalado nativo en la PC personal, ver Fase 1) queda como fallback si algún día hace
+falta desarrollar sin internet, pero **no es la fuente de verdad** — la base activa es Neon.
+
+### Proyecto Neon
+
+- Nombre del proyecto: `ls-jabones` (región `aws-us-east-1`, Postgres 17, database `ls_jabones_dev`).
+- Se creó con el CLI de Neon (`npx neonctl auth` para loguearse desde el navegador con la cuenta de
+  Neon, después `npx neonctl projects create ...`) — no hace falta repetir esto, el proyecto ya existe;
+  ver la consola en https://console.neon.tech o `npx neonctl projects list` para encontrarlo.
+- El connection string real (con la contraseña) **vive solo en `server/.env` de cada máquina — nunca en
+  este repo**, que es público. Para conseguirlo: consola de Neon → proyecto `ls-jabones` → "Connection
+  Details", o `npx neonctl connection-string ls_jabones_dev --project-id <id>`.
+
+### Cómo conectar una máquina nueva (o la netbook del laburo)
+
+1. Copiar `server/.env.example` a `server/.env` si no existe todavía.
+2. Pegar en `DATABASE_URL` el connection string de Neon (con `?sslmode=require` al final) — **no** el de
+   Postgres local.
+3. **No** volver a correr `npm run db:migrate` ni `npm run db:seed` — la base ya está migrada y sembrada.
+   Si se corren de nuevo no rompen nada (son idempotentes), pero no hace falta.
+4. Confirmar con `npm run dev` (Fase 3) que la API responde con los datos reales de Neon.
+
+### Ver las tablas
+
+- **Drizzle Studio** (`npm run db:studio` en `server/`) — no necesita configuración aparte, lee
+  `DATABASE_URL` de `.env` como cualquier otro script del proyecto.
+- **pgAdmin** — registrar un servidor nuevo con los datos del connection string de Neon: host, puerto
+  `5432`, "Maintenance database" `ls_jabones_dev`, username y password del connection string, y en la
+  pestaña de SSL poner **SSL mode: Require** (Neon exige SSL, a diferencia de Postgres local).
+
+### Gotcha operativo (Windows)
+
+Al probar esto se encontró que, en Windows, parar un `npm run dev` corrido en segundo plano no siempre
+mata el proceso `node.exe`/`tsx watch` real — puede quedar huérfano ocupando el puerto y sirviendo con
+el `DATABASE_URL` viejo cargado en memoria (por ejemplo, seguir mostrando datos de Postgres local
+después de cambiar `.env` a Neon). Antes de confiar en que el puerto 3001 está libre: `Get-NetTCPConnection
+-LocalPort 3001` en PowerShell, y matar el PID real si sigue ahí.
+
 ---
 
-## 8. (Futuro — NO arrancar todavía) Automatizar confirmación de pagos vía webhook de Mercado Pago
+## 9. (Futuro — NO arrancar todavía) Automatizar confirmación de pagos vía webhook de Mercado Pago
 
 > ⏸️ **SALTEAR este ítem cuando retomemos el roadmap.** Depende de que las Fases 1-8 ya estén
 > funcionando en producción (backend desplegado, panel admin operativo con conciliación manual
