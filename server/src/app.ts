@@ -1,5 +1,6 @@
 import cors from 'cors';
 import express, { type NextFunction, type Request, type Response } from 'express';
+import { authRouter } from './routes/auth.routes.js';
 import { combosRouter } from './routes/combos.routes.js';
 import { ordersRouter } from './routes/orders.routes.js';
 import { productsRouter } from './routes/products.routes.js';
@@ -17,6 +18,7 @@ export function createApp() {
   app.use('/api/products', productsRouter);
   app.use('/api/combos', combosRouter);
   app.use('/api/orders', ordersRouter);
+  app.use('/api/auth', authRouter);
 
   app.use((_req, res) => {
     res.status(404).json({ error: 'No encontrado' });
