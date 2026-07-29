@@ -14,7 +14,7 @@ Resuelve dos objetivos a la vez:
 
 - **Frontend:** React 18 + Vite + TypeScript + Tailwind CSS → GitHub Pages.
 - **Backend:** Node.js + Express + TypeScript → host a definir (ver `../.cloud/infra/deploy.md`).
-- **Base de datos: PostgreSQL** (desvío consciente respecto al brief original que proponía MongoDB — se eligió Postgres para alinear con el objetivo de portfolio SQL del workspace y porque el dominio, productos/combos M:N/pedidos con líneas, es un caso natural de relacional). ORM aún no decidido: Prisma vs. Drizzle (ver "Contexto relevante").
+- **Base de datos: PostgreSQL** (desvío consciente respecto al brief original que proponía MongoDB — se eligió Postgres para alinear con el objetivo de portfolio SQL del workspace y porque el dominio, productos/combos M:N/pedidos con líneas, es un caso natural de relacional). **ORM: Drizzle** (decidido 2026-07-28 — más cercano a SQL puro, mejor vidriera de diseño de base para portfolio).
 - **Auth:** JWT + bcrypt (solo admin).
 - **Mensajería:** Meta WhatsApp Cloud API (notificación de pedidos a la vendedora).
 - **Pagos:** Mercado Pago Checkout Pro (QR dinámico para cobro presencial).
@@ -30,18 +30,22 @@ Detalle completo de arquitectura, flujos, endpoints y modelo de datos en `../doc
 
 ## Tareas activas
 
-- [ ] Fase 1 — MVP: API núcleo (Express + Postgres): modelos, CRUD productos/combos, auth JWT admin, pedidos.
-- [ ] Fase 2 — MVP: Frontend catálogo + carrito + envío de pedido + panel admin básico.
-- [ ] Fase 3 — MVP: Notificación WhatsApp al crear un pedido (cierra el primer entregable mostrable).
+- [x] Fase 1 — MVP: API núcleo (Express + Postgres): modelos, CRUD productos/combos, auth JWT admin, pedidos.
+- [~] Fase 2 — MVP: Frontend catálogo + carrito + envío de pedido (listo) + panel admin básico (pendiente — ver Fase 7 de `../ROADMAP-BACKEND-ADMIN.md`).
+- [ ] Fase 3 — MVP: Notificación WhatsApp al crear un pedido (cierra el primer entregable mostrable). Nota: hoy el circuito de WhatsApp es el link `wa.me` que arma el propio cliente al enviar el pedido (`Cart.tsx`) — la vendedora sí recibe el mensaje, pero no vía Meta Cloud API automática como preveía el plan original; evaluar si esta fase sigue siendo necesaria o si el link ya resuelve el objetivo.
 - [ ] Fase 4 — posterior: Agente de marketing reactivo (plantillas + variantes + Web Share API).
 - [ ] Fase 5 — posterior: Cobro con QR de Mercado Pago.
 - [ ] Fase 6 — posterior: Deploy (GitHub Pages + host backend + Postgres producción).
 - [ ] Fase 7 — extra: marketing con IA (API Claude), notificación al cliente, métricas de ventas.
 
+> El detalle día a día del backend (setup Postgres/Drizzle, API, auth, endpoints admin, conexión del
+> frontend) se trackea en `../ROADMAP-BACKEND-ADMIN.md`, con su propia numeración de fases — al
+> 2026-07-28 tiene las fases 1-6 completas y probadas (Postgres local, API núcleo, auth admin,
+> endpoints de pedidos/pagos, frontend conectado a la API real). Sigue su Fase 7 (panel admin).
+
 ## Contexto relevante
 
 - **Decisión de stack (2026-07-22):** se cambió MongoDB → PostgreSQL respecto al brief original. Ver justificación en `../docs/analisis-mejoras.md`.
 - **Alcance del MVP (2026-07-22):** se recortó el primer entregable a fases 1-3 (catálogo + pedido + WhatsApp). QR de pago y marketing quedan documentados pero no bloquean el primer corte.
-- **ORM pendiente de decidir:** Prisma (más estándar en el ecosistema Node/TS, buena herramienta de migraciones) vs. Drizzle (más cercano a SQL puro, mejor para demostrar diseño de base de datos). Decidir al arrancar la Fase 1.
 - **Gaps de producto identificados y aún no resueltos** (ver detalle en `../docs/analisis-mejoras.md`): sin noción de capacidad de fabricación, combos rotos si se desactiva un producto miembro, cliente no puede editar/cancelar un pedido enviado, costo de marketing con IA no estimado.
-- No hay código todavía — este proyecto está en fase de documentación/especificación (pre-scaffold).
+- **Estado real del código (2026-07-28):** ya no es pre-scaffold — hay `client/` (React+Vite, deployado a GitHub Pages) y `server/` (Express+Drizzle+Postgres) funcionando end-to-end en local, probado con curl y en navegador. Antes de asumir que algo "no existe todavía", confirmar contra `../ROADMAP-BACKEND-ADMIN.md` y el código real.
