@@ -85,11 +85,14 @@ Cada fase es una sesión de trabajo separada. No se arranca la fase N+1 sin habe
 
 1. ✅ **Setup local** — Postgres local (o Docker), instalar Drizzle + `drizzle-kit`, definir el schema en
    TypeScript, generar y correr la primera migración (todas las tablas de arriba + las ya
-   documentadas). *(2026-07-28: Postgres 17 instalado nativo en Windows, migración aplicada y probada
-   con un smoke test de conexión.)*
+   documentadas). *(2026-07-28: Postgres 17 instalado nativo en Windows como servicio, base
+   `ls_jabones_dev` creada, schema en `server/src/db/schema.ts`, migración generada y aplicada.
+   Probada con un smoke test de conexión (`npm run dev`) y verificada con pgAdmin / Drizzle Studio.)*
 2. ✅ **Seed** — script que migra `client/src/data/products.mock.ts` y `combos.mock.ts` a filas reales
-   insertadas en la base, para no perder el catálogo ya armado a mano. *(Esos archivos mock ya se
-   borraron en la Fase 6 — `server/src/db/seed.ts` tiene su propia copia de los datos.)*
+   insertadas en la base, para no perder el catálogo ya armado a mano. *(Corre con `npm run db:seed`
+   y es idempotente. Verificado: 8 productos, 2 combos y las relaciones combo↔producto correctas.
+   Esos archivos mock ya se borraron en la Fase 6 — `server/src/db/seed.ts` tiene su propia copia de
+   los datos.)*
 3. ✅ **API núcleo** — `GET /api/products`, `GET /api/combos` (públicos), `POST /api/orders` (lo va a
    llamar el checkout del frontend). *(Probado con curl: recalcula precios de producto/combo desde la
    base, confía en el snapshot solo para "custom-combo".)*
